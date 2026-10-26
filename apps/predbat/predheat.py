@@ -268,9 +268,9 @@ class PredHeat:
         total_weight = 0
         this_point = 0
 
-        # No data?
+        # No data? Use the caller's fallback when history is missing.
         if not data:
-            return 0
+            return default
 
         for days in self.days_previous:
             use_days = min(days, self.minute_data_age)
@@ -584,7 +584,8 @@ class PredHeat:
         self.internal_temperature, age_internal = self.minute_data_entity(now_utc, "internal_temperature", smoothing=True)
         self.target_temperature, age_target = self.minute_data_entity(now_utc, "target_temperature")
         self.heating_energy, age_energy = self.minute_data_entity(now_utc, "heating_energy", incrementing=True, smoothing=True, scaling=self.heating_energy_scaling)
-        self.minute_data_age = min(age_external, age_internal, age_target, age_energy)
+        # Heating energy is optional; its absence must not discard temperature history.
+        self.minute_data_age = min(age_external, age_internal, age_target)
 
         self.heat_energy_today = self.heating_energy.get(0, 0) - self.heating_energy.get(self.minutes_now, 0)
 
