@@ -387,9 +387,9 @@ class PredHeat:
             # Thermostat model, override with current state also
             if minute == 0:
                 heating_on = heating_active
-            elif heating_on and temp_diff_inside <= -self.hysteresis_on:
+            elif heating_on and temp_diff_inside <= -self.hysteresis_off:
                 heating_on = False
-            elif not heating_on and temp_diff_inside >= self.hysteresis_off:
+            elif not heating_on and temp_diff_inside >= self.hysteresis_on:
                 heating_on = True
 
             heat_loss_current = self.heat_loss_watts * temp_diff_outside * PREDICT_STEP / 60.0
