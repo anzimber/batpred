@@ -604,7 +604,10 @@ class PredHeat:
         self.heat_volume = self.get_arg("heat_volume", 200, domain="predheat")
         self.heat_max_power = self.get_arg("heat_max_power", 30000, domain="predheat")
         self.heat_min_power = self.get_arg("heat_min_power", 7000, domain="predheat")
-        self.heat_cop = self.get_arg("heat_cop", 0.9, domain="predheat")
+        # heating_cop is the documented setting; keep heat_cop for existing configs.
+        self.heat_cop = self.get_arg("heating_cop", None, domain="predheat")
+        if self.heat_cop is None:
+            self.heat_cop = self.get_arg("heat_cop", 0.9, domain="predheat")
         self.smart_thermostat = self.get_arg("smart_thermostat", False, domain="predheat")
         self.smart_thermostat_max_minutes = self.get_smart_thermostat_max_minutes()
         self.heating_active = self.get_arg("heating_active", False, domain="predheat")
