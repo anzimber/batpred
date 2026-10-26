@@ -580,12 +580,11 @@ class PredHeat:
         self.max_days_previous = max(self.days_previous) + 1
         self.heating_energy_scaling = self.get_arg("heating_energy_scaling", 1.0, domain="predheat")
 
-        self.external_temperature, age_external = self.minute_data_entity(now_utc, "external_temperature", smoothing=True)
-        self.internal_temperature, age_internal = self.minute_data_entity(now_utc, "internal_temperature", smoothing=True)
-        self.target_temperature, age_target = self.minute_data_entity(now_utc, "target_temperature")
-        self.heating_energy, age_energy = self.minute_data_entity(now_utc, "heating_energy", incrementing=True, smoothing=True, scaling=self.heating_energy_scaling)
-        # Heating energy is optional; its absence must not discard temperature history.
-        self.minute_data_age = min(age_external, age_internal, age_target)
+        self.external_temperature, _ = self.minute_data_entity(now_utc, "external_temperature", smoothing=True)
+        self.internal_temperature, _ = self.minute_data_entity(now_utc, "internal_temperature", smoothing=True)
+        # Historical lookups use the target schedule, so its history alone sets the lookback.
+        self.target_temperature, self.minute_data_age = self.minute_data_entity(now_utc, "target_temperature")
+        self.heating_energy, _ = self.minute_data_entity(now_utc, "heating_energy", incrementing=True, smoothing=True, scaling=self.heating_energy_scaling)
 
         self.heat_energy_today = self.heating_energy.get(0, 0) - self.heating_energy.get(self.minutes_now, 0)
 
